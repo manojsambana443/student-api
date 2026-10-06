@@ -1,0 +1,173 @@
+openapi: 3.0.3
+
+info:
+  title: Student API
+  description: REST API for managing students
+  version: 1.0.0
+
+servers:
+  - url: http://127.0.0.1:5000
+
+paths:
+
+  /:
+    get:
+      summary: Check that the API is running
+      responses:
+        '200':
+          description: API is running
+
+  /healthcheck:
+    get:
+      summary: Check application health
+      responses:
+        '200':
+          description: Application is healthy
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: healthy
+
+  /api/v1/students:
+    get:
+      summary: Get all students
+      responses:
+        '200':
+          description: List of students
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Student'
+
+    post:
+      summary: Create a student
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/StudentInput'
+      responses:
+        '201':
+          description: Student created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Student'
+        '400':
+          description: Invalid request
+
+  /api/v1/students/{student_id}:
+    parameters:
+      - name: student_id
+        in: path
+        required: true
+        description: ID of the student
+        schema:
+          type: integer
+
+    get:
+      summary: Get a student by ID
+      responses:
+        '200':
+          description: Student found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Student'
+        '404':
+          description: Student not found
+
+    put:
+      summary: Update a student
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/StudentInput'
+      responses:
+        '200':
+          description: Student updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Student'
+        '400':
+          description: Invalid request
+        '404':
+          description: Student not found
+
+    patch:
+      summary: Partially update a student
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/StudentPatch'
+      responses:
+        '200':
+          description: Student updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Student'
+        '400':
+          description: Invalid request
+        '404':
+          description: Student not found
+
+    delete:
+      summary: Delete a student
+      responses:
+        '200':
+          description: Student deleted
+        '404':
+          description: Student not found
+
+components:
+
+  schemas:
+
+    Student:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 1
+        name:
+          type: string
+          example: Manoj
+        course:
+          type: string
+          example: DevOps
+
+    StudentInput:
+      type: object
+      required:
+        - name
+        - course
+      properties:
+        name:
+          type: string
+          example: Manoj
+        course:
+          type: string
+          example: DevOps
+
+    StudentPatch:
+      type: object
+      properties:
+        name:
+          type: string
+          example: Manoj
+        course:
+          type: string
+          example: Azure DevOps
