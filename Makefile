@@ -1,5 +1,8 @@
+
 IMAGE_NAME=student-api
-VERSION=1.1.0
+VERSION=1.2.0
+
+.PHONY: install run test migrate docker-build docker-run setup down logs status
 
 install:
 	pip install -r requirements.txt
@@ -22,3 +25,15 @@ docker-run:
 		--env-file .env \
 		-e DB_HOST=host.docker.internal \
 		$(IMAGE_NAME):$(VERSION)
+
+setup:
+	docker compose up --build -d
+
+down:
+	docker compose down
+
+logs:
+	docker compose logs -f
+
+status:
+	docker compose ps -a

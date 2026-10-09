@@ -452,3 +452,50 @@ The project does not rely on the `latest` Docker tag.
 ## License
 
 This project is created for learning and SRE/DevOps practice as part of the One2N SRE Bootcamp.
+
+## One-Click Local Development Setup (Docker Compose)
+
+Docker Compose starts the application stack with a single command, including PostgreSQL, database migrations, and the Flask API.
+
+### Prerequisites
+- Docker installed
+- Docker Compose v2
+- A `.env` file containing the required database configuration
+
+### Start the Application
+
+```bash
+make setup
+```
+
+This command builds the application image and starts the services in the correct order:
+
+1. **Database (`db`)** — starts PostgreSQL and waits for its health check to pass.
+2. **Migration (`migrate`)** — applies pending database migrations and exits successfully.
+3. **API (`api`)** — starts the Flask API after migrations complete successfully.
+
+### Verify the Setup
+
+```bash
+make status
+curl http://localhost:5000/healthcheck
+curl http://localhost:5000/api/v1/students
+```
+
+The health-check endpoint should return a healthy status.
+
+### View Logs
+
+```bash
+make logs
+```
+
+### Stop the Application
+
+```bash
+make down
+```
+
+This removes the Compose containers and network but preserves the named PostgreSQL volume. Database data remains available when the stack is started again with `make setup`.
+
+**Note:** Do not use `docker compose down -v` unless you intentionally want to remove the named volume and its stored database data.
