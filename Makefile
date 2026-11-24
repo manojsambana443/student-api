@@ -2,7 +2,7 @@
 IMAGE_NAME=student-api
 VERSION=1.2.0
 
-.PHONY: install run test migrate docker-build docker-run setup down logs status
+.PHONY: install run test migrate docker-build docker-run setup down logs status build lint
 
 install:
 	pip install -r requirements.txt
@@ -10,8 +10,14 @@ install:
 run:
 	python app.py
 
+build:
+	python -m compileall -q app.py migrate.py
+
 test:
 	pytest
+
+lint:
+	ruff check app.py migrate.py tests/
 
 migrate:
 	python migrate.py
