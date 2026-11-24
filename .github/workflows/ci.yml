@@ -7,6 +7,7 @@ on:
     paths:
       - 'app.py'
       - 'migrate.py'
+      - 'migrations/**'
       - 'tests/**'
       - 'requirements.txt'
       - 'requirements-dev.txt'
@@ -19,6 +20,28 @@ jobs:
   ci:
     name: Build, Lint and Test
     runs-on: self-hosted
+
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_DB: student_api_test
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U postgres -d student_api_test"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+
+    env:
+      DB_HOST: localhost
+      DB_PORT: 5432
+      DB_NAME: student_api_test
+      DB_USER: postgres
+      DB_PASSWORD: postgres
 
     steps:
       - name: Checkout repository
@@ -37,6 +60,9 @@ jobs:
 
       - name: Lint
         run: make lint
+
+      - name: Run database migrations
+        run: python migrate.py
 
       - name: Test
         run: make test
